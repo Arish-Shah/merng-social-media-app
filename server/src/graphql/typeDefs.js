@@ -1,29 +1,24 @@
 const { gql } = require("apollo-server");
-const mongoose = require("mongoose");
-
-const { ObjectId } = mongoose.Types;
-
-ObjectId.prototype.valueOf = function () {
-  return this.toString();
-};
 
 const typeDefs = gql`
   type Query {
     me: User
     posts: [Post!]!
+    post(postID: ID!): Post
   }
 
   type Mutation {
-    register(input: RegisterInput!): AuthPayload!
-    login(username: String!, password: String!): AuthPayload!
+    register(input: RegisterInput!): UserResponse!
+    login(username: String!, password: String!): UserResponse!
     createPost(input: PostInput!): PostResponse!
     deletePost(id: ID!): Boolean!
+    createComment(postID: ID!, body: String!): CommentResponse!
+    deleteComment(postID: ID!, commentID: ID!): Boolean!
+    like(postID: ID!): Boolean!
   }
 
-  type AuthPayload {
-    user: User
-    errors: FieldError
-    token: String!
+  type Subscription {
+    newPost: Post!
   }
 
   type User {
@@ -31,11 +26,7 @@ const typeDefs = gql`
     email: String!
     username: String!
     createdAt: Date!
-  }
-
-  type PostResponse {
-    post: Post
-    errors: FieldError
+    token: String!
   }
 
   type Post {
@@ -43,7 +34,40 @@ const typeDefs = gql`
     title: String!
     body: String!
     creator: User!
+    isLiked: Boolean!
+    likesCount: Int!
+    comments: [Comment!]!
+    commentsCount: Int!
     createdAt: Date!
+  }
+
+  type Comment {
+    id: ID!
+    body: String!
+    creator: User!
+    post: Post!
+  }
+
+  type Like {
+    id: ID!
+    post: Post!
+    creator: User!
+    createdAt: Date!
+  }
+
+  type UserResponse {
+    user: User
+    errors: FieldError
+  }
+
+  type PostResponse {
+    post: Post
+    errors: FieldError
+  }
+
+  type CommentResponse {
+    comment: Comment
+    errors: FieldError
   }
 
   type FieldError {

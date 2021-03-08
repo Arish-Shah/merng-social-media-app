@@ -25,7 +25,17 @@ const validatePost = (input) => {
   return Object.keys(errors).length ? errors : null;
 };
 
+const validateComment = (body) => {
+  if (body.length < 1) {
+    return {
+      body: "cannot be empty",
+    };
+  }
+  return null;
+};
+
 module.exports = {
   validateRegister,
   validatePost,
+  validateComment,
 };
