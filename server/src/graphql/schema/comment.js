@@ -7,6 +7,7 @@ import Comment from "../../models/Comment.js";
 export const typeDefs = gql`
   extend type Mutation {
     createComment(body: String!, postID: ID!): CommentResponse!
+    deleteComment(commentID: ID!): Boolean!
   }
 
   type CommentResponse {
@@ -25,7 +26,7 @@ export const typeDefs = gql`
 
 export const resolvers = {
   Mutation: {
-    createComment: (_, { body, postID }, { req }) => {
+    createComment: async (_, { body, postID }, { req }) => {
       const { userID } = req.session;
       if (!userID) {
         throw new AuthenticationError("Unauthenticated");
@@ -39,10 +40,28 @@ export const resolvers = {
         };
       }
 
+      // Check if post exists first
+      const post = await Post.findById(postID);
+      if (!post) {
+        throw new Error("Post does not exist");
+      }
+
       const comment = Comment.create({ body, postID, creatorID: userID });
       return {
         comment,
       };
+    },
+    deleteComment: async (_, { commentID }, { req }) => {
+      const { userID } = req.session;
+      if (!userID) {
+        throw new AuthenticationError("Unauthenticated");
+      }
+      const comment = await Comment.findById(commentID);
+      if (!comment || comment.creatorID.toString() != userID) {
+        return false;
+      }
+      await comment.delete();
+      return true;
     },
   },
   Comment: {

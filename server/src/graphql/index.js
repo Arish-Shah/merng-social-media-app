@@ -6,6 +6,7 @@ import {
   typeDefs as Comment,
   resolvers as commentResolvers,
 } from "./schema/comment.js";
+import { typeDefs as Like, resolvers as likeResolvers } from "./schema/like.js";
 
 const Query = gql`
   type Query {
@@ -28,8 +29,8 @@ const Query = gql`
 `;
 
 const schema = makeExecutableSchema({
-  typeDefs: [Query, User, Post, Comment],
-  resolvers: [userResolvers, postResolvers, commentResolvers],
+  typeDefs: [Query, User, Post, Comment, Like],
+  resolvers: [userResolvers, postResolvers, commentResolvers, likeResolvers],
 });
 
 export default schema;

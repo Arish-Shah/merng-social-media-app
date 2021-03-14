@@ -3,6 +3,7 @@ import { gql, AuthenticationError } from "apollo-server-express";
 import Post from "../../models/Post.js";
 import User from "../../models/User.js";
 import Comment from "../../models/Comment.js";
+import Like from "../../models/Like.js";
 import { validatePost } from "../../util/validators.js";
 
 export const typeDefs = gql`
@@ -28,6 +29,9 @@ export const typeDefs = gql`
     creator: User!
     comments: [Comment!]!
     commentsCount: Int!
+    likes: [Like!]!
+    likesCount: Int!
+    isLiked: Boolean!
     createdAt: Date!
   }
 
@@ -77,15 +81,25 @@ export const resolvers = {
 
       await post.delete();
       await Comment.deleteMany({ postID });
+      await Like.deleteMany({ postID });
       return true;
     },
   },
   Post: {
-    creator: (parent) => {
-      return User.findById(parent.creatorID);
-    },
-    comments: (parent) => {
-      return Comment.find({ postID: parent.id });
+    creator: (parent) => User.findById(parent.creatorID),
+    comments: (parent) => Comment.find({ postID: parent.id }),
+    likes: (parent) => Like.find({ postID: parent.id }),
+    likesCount: (parent) => Like.countDocuments({ postID: parent.id }),
+    isLiked: async (parent, _, { req }) => {
+      const { userID } = req.session;
+      if (!userID) {
+        return false;
+      }
+      const boolean = await Like.findOne({
+        postID: parent.id,
+        creatorID: userID,
+      });
+      return !!boolean;
     },
   },
 };
