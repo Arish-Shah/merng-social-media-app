@@ -1,10 +1,11 @@
-const { ApolloServer } = require("apollo-server");
-const mongoose = require("mongoose");
-const dotenv = require("dotenv");
+import { ApolloServer } from "apollo-server-express";
+import express from "express";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import session from "express-session";
+import MongoStore from "connect-mongo";
 
-const resolvers = require("./graphql/resolvers");
-const typeDefs = require("./graphql/typeDefs");
-const { readToken } = require("./utils/token");
+import schema from "./graphql/index.js";
 
 const main = async () => {
   dotenv.config();
@@ -12,27 +13,42 @@ const main = async () => {
   await mongoose.connect(process.env.MONGO_URI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useCreateIndex: true,
   });
+
+  const port = process.env.PORT || 4000;
 
   const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    context: ({ req, res }) => {
-      const authHeader = req.headers.authorization || "";
-      const token = authHeader.replace("Bearer ", "").trim();
-      const userID = readToken(token);
-
-      return {
-        req,
-        res,
-        userID,
-      };
-    },
+    schema,
+    context: ({ req, res }) => ({ req, res }),
   });
 
-  const { url } = await server.listen(process.env.PORT);
-  console.log(`🚀 Server started on ${url}`);
+  const app = express();
+
+  app.use(
+    session({
+      name: process.env.COOKIE_NAME,
+      secret: process.env.SESSION_SECRET,
+      store: MongoStore.create({
+        mongoUrl: process.env.MONGO_URI,
+        dbName: process.env.DB_NAME,
+        collectionName: "sessions",
+      }),
+      cookie: {
+        httpOnly: true,
+        maxAge: 14 * 24 * 60 * 60,
+        secure: false,
+        path: "/",
+      },
+      resave: false,
+      saveUninitialized: false,
+    })
+  );
+
+  server.applyMiddleware({ app });
+
+  app.listen(port, () => {
+    console.log(`🚀 Server started on http://localhost:${port}/graphql`);
+  });
 };
 
 main().catch(console.error);

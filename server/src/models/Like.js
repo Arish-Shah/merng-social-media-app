@@ -1,14 +1,18 @@
-const { Schema, model } = require("mongoose");
+import mongoose from "mongoose";
+
+const Schema = mongoose.Schema;
 
 const likeSchema = new Schema(
   {
-    post: {
+    postID: {
       type: Schema.Types.ObjectId,
       ref: "Post",
+      required: true,
     },
-    creator: {
+    creatorID: {
       type: Schema.Types.ObjectId,
       ref: "User",
+      required: true,
     },
   },
   {
@@ -16,4 +20,4 @@ const likeSchema = new Schema(
   }
 );
 
-module.exports = model("Like", likeSchema);
+export default mongoose.model("Like", likeSchema);

@@ -1,4 +1,6 @@
-const { Schema, model } = require("mongoose");
+import mongoose from "mongoose";
+
+const Schema = mongoose.Schema;
 
 const postSchema = new Schema(
   {
@@ -10,7 +12,7 @@ const postSchema = new Schema(
       type: String,
       required: true,
     },
-    creator: {
+    creatorID: {
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
@@ -21,4 +23,4 @@ const postSchema = new Schema(
   }
 );
 
-module.exports = model("Post", postSchema);
+export default mongoose.model("Post", postSchema);
