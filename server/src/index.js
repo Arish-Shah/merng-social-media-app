@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import session from "express-session";
 import MongoStore from "connect-mongo";
+import cors from "cors";
 
 import schema from "./graphql/index.js";
 
@@ -25,6 +26,13 @@ const main = async () => {
   const app = express();
 
   app.use(
+    cors({
+      credentials: true,
+      origin: process.env.CLIENT_URL,
+    })
+  );
+
+  app.use(
     session({
       name: process.env.COOKIE_NAME,
       secret: process.env.SESSION_SECRET,
@@ -44,7 +52,7 @@ const main = async () => {
     })
   );
 
-  server.applyMiddleware({ app });
+  server.applyMiddleware({ app, cors: false });
 
   app.listen(port, () => {
     console.log(`🚀 Server started on http://localhost:${port}/graphql`);

@@ -8,13 +8,18 @@ import { validatePost } from "../../util/validators.js";
 
 export const typeDefs = gql`
   extend type Query {
-    feed: [Post!]!
+    feed(limit: Int!, skip: Int): Feed!
     post(id: ID!): Post
   }
 
   extend type Mutation {
     createPost(input: PostInput!): PostResponse!
     deletePost(postID: ID!): Boolean!
+  }
+
+  type Feed {
+    posts: [Post!]!
+    hasMore: Boolean!
   }
 
   type PostResponse {
@@ -26,6 +31,7 @@ export const typeDefs = gql`
     id: ID!
     title: String!
     body: String!
+    snippet: String!
     creator: User!
     comments: [Comment!]!
     commentsCount: Int!
@@ -43,8 +49,19 @@ export const typeDefs = gql`
 
 export const resolvers = {
   Query: {
-    feed: () => {
-      return Post.find().sort("-createdAt");
+    feed: async (_, args) => {
+      const posts = args.skip
+        ? await Post.find()
+            .sort("-createdAt")
+            .skip(args.skip)
+            .limit(args.limit + 1)
+        : await Post.find()
+            .sort("-createdAt")
+            .limit(args.limit + 1);
+      return {
+        posts: posts.slice(0, args.limit),
+        hasMore: posts.length === args.limit + 1,
+      };
     },
     post: (_, { id }) => {
       return Post.findById(id);
@@ -86,8 +103,10 @@ export const resolvers = {
     },
   },
   Post: {
+    snippet: (parent) => parent.body.substring(0, 67) + "...",
     creator: (parent) => User.findById(parent.creatorID),
     comments: (parent) => Comment.find({ postID: parent.id }),
+    commentsCount: (parent) => Comment.countDocuments({ postID: parent.id }),
     likes: (parent) => Like.find({ postID: parent.id }),
     likesCount: (parent) => Like.countDocuments({ postID: parent.id }),
     isLiked: async (parent, _, { req }) => {
