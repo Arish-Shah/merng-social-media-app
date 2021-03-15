@@ -30,23 +30,23 @@ const Login = () => {
       }
     },
     onCompleted(data) {
+      if (data.login.errors) {
+        setErrors({ ...data.login.errors });
+      }
       if (data.login.user) {
         router.push("/feed");
       }
     },
   });
 
-  const onSubmit = async (event) => {
+  const onSubmit = (event) => {
     event.preventDefault();
-    const response = await login({
+    login({
       variables: {
         username,
         password,
       },
     });
-    if (response?.data?.login?.errors) {
-      setErrors({ ...response.data.login.errors });
-    }
   };
 
   return (

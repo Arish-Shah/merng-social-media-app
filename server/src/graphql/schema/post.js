@@ -105,7 +105,8 @@ export const resolvers = {
   Post: {
     snippet: (parent) => parent.body.substring(0, 67) + "...",
     creator: (parent) => User.findById(parent.creatorID),
-    comments: (parent) => Comment.find({ postID: parent.id }),
+    comments: (parent) =>
+      Comment.find({ postID: parent.id }).sort("-createdAt"),
     commentsCount: (parent) => Comment.countDocuments({ postID: parent.id }),
     likes: (parent) => Like.find({ postID: parent.id }),
     likesCount: (parent) => Like.countDocuments({ postID: parent.id }),

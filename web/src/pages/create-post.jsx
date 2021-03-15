@@ -17,11 +17,16 @@ const CreatePost = () => {
     update(cache) {
       cache.evict({ fieldName: "feed" });
     },
+    onCompleted(data) {
+      if (data.createPost.post) {
+        router.push("/feed");
+      }
+    },
   });
 
-  const onSubmit = async (event) => {
+  const onSubmit = (event) => {
     event.preventDefault();
-    const response = await createPost({
+    createPost({
       variables: {
         input: {
           title,
@@ -29,9 +34,6 @@ const CreatePost = () => {
         },
       },
     });
-    if (response.data.createPost.post) {
-      router.push("/feed");
-    }
   };
 
   return (

@@ -35,12 +35,15 @@ const Register = () => {
       if (data.register.user) {
         router.push("/feed");
       }
+      if (data.register.errors) {
+        setErrors({ ...data.register.errors });
+      }
     },
   });
 
-  const onSubmit = async (event) => {
+  const onSubmit = (event) => {
     event.preventDefault();
-    const response = await register({
+    register({
       variables: {
         input: {
           email,
@@ -49,9 +52,6 @@ const Register = () => {
         },
       },
     });
-    if (response?.data?.register?.errors) {
-      setErrors({ ...response.data.register.errors });
-    }
   };
 
   return (

@@ -1,7 +1,7 @@
 import { gql } from "@apollo/client";
 
 export const ME = gql`
-  query {
+  query Me {
     me {
       id
       username
@@ -10,7 +10,7 @@ export const ME = gql`
 `;
 
 export const FEED = gql`
-  query($limit: Int!, $skip: Int) {
+  query Feed($limit: Int!, $skip: Int) {
     feed(limit: $limit, skip: $skip) {
       posts {
         id
@@ -26,6 +26,32 @@ export const FEED = gql`
         createdAt
       }
       hasMore
+    }
+  }
+`;
+
+export const POST = gql`
+  query Post($id: ID!) {
+    post(id: $id) {
+      id
+      title
+      body
+      creator {
+        id
+        username
+      }
+      comments {
+        id
+        body
+        createdAt
+        creator {
+          username
+        }
+      }
+      isLiked
+      likesCount
+      commentsCount
+      createdAt
     }
   }
 `;
