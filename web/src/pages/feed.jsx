@@ -1,23 +1,25 @@
-import { Button } from "react-bootstrap";
-import { Fragment, useEffect } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useLazyQuery } from "@apollo/client";
 
 import Post from "../components/Post";
+import LoadingButton from "../components/LoadingButton";
 import { FEED } from "../graphql/queries";
 
 const Feed = () => {
+  const [loadingMore, setLoadingMore] = useState(false);
   const [feed, { data, loading, fetchMore }] = useLazyQuery(FEED, {
     variables: {
-      limit: 10,
+      limit: 3,
     },
   });
 
   const onLoadMore = () => {
+    setLoadingMore(true);
     fetchMore({
       variables: {
         skip: data.feed.posts.length,
       },
-    });
+    }).then(() => setLoadingMore(false));
   };
 
   useEffect(() => {
@@ -31,13 +33,15 @@ const Feed = () => {
           <Post key={post.id} post={post} />
         ))}
         {data.feed.hasMore && (
-          <Button
-            className="btn-block mb-4"
+          <LoadingButton
+            text="load more"
+            loadingText="loading..."
+            loading={loadingMore}
             variant="light"
+            className="mb-4"
             onClick={onLoadMore}
-          >
-            load more
-          </Button>
+            block
+          />
         )}
       </Fragment>
     );

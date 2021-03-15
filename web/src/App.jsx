@@ -1,5 +1,5 @@
 import { Fragment } from "react";
-import { Route, Switch } from "react-router";
+import { Redirect, Route, Switch } from "react-router";
 import { Col, Container, Row } from "react-bootstrap";
 
 import Register from "./pages/register";
@@ -18,6 +18,7 @@ const App = () => {
       <Route path="/register" component={Register} exact />
       <Route path="/create-post" component={CreatePost} exact />
       <Route path="/post/:id" component={Post} exact />
+      <Redirect to="/feed" />
     </Switch>
   );
 
