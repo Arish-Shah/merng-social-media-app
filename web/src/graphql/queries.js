@@ -24,6 +24,7 @@ export const FEED = gql`
         commentsCount
         isLiked
         createdAt
+        updatedAt
       }
       hasMore
     }
@@ -52,6 +53,7 @@ export const POST = gql`
       likesCount
       commentsCount
       createdAt
+      updatedAt
     }
   }
 `;

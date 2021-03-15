@@ -19,7 +19,11 @@ const Post = ({ post }) => {
       <Card.Footer className="d-flex justify-content-between">
         <PostActions for={post} small={true} />
         <div>
-          <small className="text-muted">{formatDate(post.createdAt)}</small>
+          <small className="text-muted">
+            {post.createdAt !== post.updatedAt
+              ? "edited " + formatDate(post.updatedAt)
+              : "posted " + formatDate(post.createdAt)}
+          </small>
         </div>
       </Card.Footer>
     </Card>

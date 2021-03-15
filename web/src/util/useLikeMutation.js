@@ -1,11 +1,14 @@
 import { useMutation } from "@apollo/client";
 import { useState } from "react";
+import { useHistory } from "react-router";
 
 import { LIKE } from "../graphql/mutations";
 import { POST_FRAGMENT } from "../graphql/fragments";
 
 const useLikeMutation = (postID, isLiked) => {
   const [liked, setLiked] = useState(isLiked);
+
+  const router = useHistory();
 
   const [like] = useMutation(LIKE, {
     variables: {
@@ -26,6 +29,11 @@ const useLikeMutation = (postID, isLiked) => {
             isLiked: !isLiked,
           },
         });
+      }
+    },
+    onError(error) {
+      if (error.message === "Unauthenticated") {
+        router.push("/login");
       }
     },
   });

@@ -51,12 +51,19 @@ export const CREATE_POST = gql`
         commentsCount
         isLiked
         createdAt
+        updatedAt
       }
       errors {
         title
         body
       }
     }
+  }
+`;
+
+export const EDIT_POST = gql`
+  mutation EditPost($postID: ID!, $input: PostInput!) {
+    editPost(postID: $postID, input: $input)
   }
 `;
 

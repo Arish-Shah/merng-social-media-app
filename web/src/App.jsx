@@ -7,6 +7,7 @@ import Login from "./pages/login";
 import Feed from "./pages/feed";
 import CreatePost from "./pages/create-post";
 import Post from "./pages/post";
+import EditPost from "./pages/edit-post";
 
 import Topbar from "./components/Topbar";
 
@@ -18,6 +19,7 @@ const App = () => {
       <Route path="/register" component={Register} exact />
       <Route path="/create-post" component={CreatePost} exact />
       <Route path="/post/:id" component={Post} exact />
+      <Route path="/post/edit/:id" component={EditPost} exact />
       <Redirect to="/feed" />
     </Switch>
   );

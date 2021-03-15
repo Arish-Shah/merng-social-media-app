@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import { Container, Dropdown, Nav, Navbar } from "react-bootstrap";
-import { NavLink, useHistory } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
 
 import { ME } from "../graphql/queries";
@@ -8,8 +8,6 @@ import { LOGOUT } from "../graphql/mutations";
 
 const Topbar = () => {
   const { data, loading } = useQuery(ME);
-
-  const router = useHistory();
 
   const [logout] = useMutation(LOGOUT, {
     update(cache) {
@@ -20,11 +18,6 @@ const Topbar = () => {
         },
       });
       cache.evict({ fieldName: "feed" });
-    },
-    onCompleted(data) {
-      if (data.logout) {
-        router.push("/login");
-      }
     },
   });
 

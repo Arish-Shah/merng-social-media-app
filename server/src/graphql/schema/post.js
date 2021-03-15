@@ -14,6 +14,7 @@ export const typeDefs = gql`
 
   extend type Mutation {
     createPost(input: PostInput!): PostResponse!
+    editPost(postID: ID!, input: PostInput!): Boolean!
     deletePost(postID: ID!): Boolean!
   }
 
@@ -39,6 +40,7 @@ export const typeDefs = gql`
     likesCount: Int!
     isLiked: Boolean!
     createdAt: Date!
+    updatedAt: Date!
   }
 
   input PostInput {
@@ -52,11 +54,11 @@ export const resolvers = {
     feed: async (_, args) => {
       const posts = args.skip
         ? await Post.find()
-            .sort("-createdAt")
+            .sort("-updatedAt")
             .skip(args.skip)
             .limit(args.limit + 1)
         : await Post.find()
-            .sort("-createdAt")
+            .sort("-updatedAt")
             .limit(args.limit + 1);
       return {
         posts: posts.slice(0, args.limit),
@@ -84,6 +86,24 @@ export const resolvers = {
       return {
         post,
       };
+    },
+    editPost: async (_, { postID, input }, { req }) => {
+      const { userID } = req.session;
+      if (!userID) {
+        throw new AuthenticationError("Unauthenticated");
+      }
+      const post = await Post.findById(postID);
+      if (
+        post &&
+        post.creatorID.toString() === userID &&
+        !validatePost(input)
+      ) {
+        post.title = input.title;
+        post.body = input.body;
+        await post.save();
+        return true;
+      }
+      return false;
     },
     deletePost: async (_, { postID }, { req }) => {
       const { userID } = req.session;

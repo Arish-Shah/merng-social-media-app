@@ -26,3 +26,11 @@ export const COMMENTS_COUNT_FRAGMENT = gql`
     commentsCount
   }
 `;
+
+export const UPDATE_POST_FRAGMENT = gql`
+  fragment ____ on Post {
+    title
+    snippet
+    body
+  }
+`;

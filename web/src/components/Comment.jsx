@@ -49,16 +49,17 @@ const Comment = ({ comment, postID }) => {
     <Fragment>
       <div className="mb-3">
         <div>{comment.body}</div>
-        <small className="text-muted">
-          @{comment.creator.username} &middot; {formatDate(comment.createdAt)}
+        <small className="text-muted d-flex align-items-center">
+          @{comment.creator.username}
+          &nbsp;&middot;&nbsp;
+          {formatDate(comment.createdAt)}
           {data?.me?.username === comment.creator.username && (
             <Fragment>
-              {" "}
-              &middot;{" "}
+              &nbsp;&middot;&nbsp;
               <Button
                 size="sm"
-                variant="light"
-                className="text-danger"
+                variant="link"
+                className="text-danger p-0"
                 onClick={() => setShowDeleteModal(true)}
               >
                 Delete

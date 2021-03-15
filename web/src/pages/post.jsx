@@ -27,18 +27,21 @@ const Post = () => {
   }, [location.hash, data]);
 
   if (!loading && !data?.post) {
-    return <h3 className="text-center">Post Not Found</h3>;
+    return <h3 className="text-center mt-5">Post Not Found</h3>;
   } else if (!loading && data.post) {
     return (
       <Fragment>
-        <h1>{data.post.title}</h1>
+        <h1 className="mb-3">{data.post.title}</h1>
         <h6 className="text-muted mb-3">
           @{data.post.creator.username} &middot;{" "}
-          {formatDate(data.post.createdAt)}
+          {data.post.createdAt !== data.post.updatedAt
+            ? "edited " + formatDate(data.post.updatedAt)
+            : "posted " + formatDate(data.post.createdAt)}
         </h6>
-        <PostActions for={data.post} className="mb-2" />
-        <p>{data.post.body}</p>
-        <div className="my-5" id="comments" ref={commentsRef}>
+        <PostActions for={data.post} className="mb-3" />
+        <p className="mb-4">{data.post.body}</p>
+        <hr />
+        <div className="my-4" id="comments" ref={commentsRef}>
           <h6 className="m-0">
             {data.post.comments.length}{" "}
             {data.post.comments.length === 1 ? "comment" : "comments"}
@@ -52,7 +55,7 @@ const Post = () => {
       </Fragment>
     );
   } else {
-    return <p>Loading...</p>;
+    return <div className="text-center">loading...</div>;
   }
 };
 
