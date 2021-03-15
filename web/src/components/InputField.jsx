@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import { Form } from "react-bootstrap";
 
 const InputField = ({
@@ -9,8 +10,17 @@ const InputField = ({
   error,
   isTextArea,
   rows,
+  autoFocus = false,
 }) => {
   const as = isTextArea ? "textarea" : "input";
+
+  const inputRef = useRef();
+
+  useEffect(() => {
+    if (autoFocus) {
+      inputRef.current.focus();
+    }
+  }, [autoFocus]);
 
   return (
     <Form.Group>
@@ -23,6 +33,7 @@ const InputField = ({
         isInvalid={!!error}
         as={as}
         rows={rows}
+        ref={inputRef}
         required
       />
       {error && (

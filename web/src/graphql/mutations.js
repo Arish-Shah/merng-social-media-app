@@ -60,6 +60,12 @@ export const CREATE_POST = gql`
   }
 `;
 
+export const DELETE_POST = gql`
+  mutation DeletePost($postID: ID!) {
+    deletePost(postID: $postID)
+  }
+`;
+
 export const CREATE_COMMENT = gql`
   mutation CreateComment($body: String!, $postID: ID!) {
     createComment(body: $body, postID: $postID) {
@@ -75,6 +81,12 @@ export const CREATE_COMMENT = gql`
         body
       }
     }
+  }
+`;
+
+export const DELETE_COMMENT = gql`
+  mutation DeleteComment($commentID: ID!) {
+    deleteComment(commentID: $commentID)
   }
 `;
 

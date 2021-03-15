@@ -44,6 +44,7 @@ const CreatePost = () => {
         placeholder="title"
         value={title}
         onChange={setTitle}
+        autoFocus={true}
       />
       <InputField
         isTextArea={true}

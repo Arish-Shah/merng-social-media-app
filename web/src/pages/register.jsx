@@ -64,6 +64,7 @@ const Register = () => {
         value={email}
         onChange={setEmail}
         error={errors.email}
+        autoFocus={true}
       />
       <InputField
         type="text"

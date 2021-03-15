@@ -1,10 +1,11 @@
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { useState } from "react";
 import { Form } from "react-bootstrap";
 
 import InputField from "./InputField";
 import LoadingButton from "./LoadingButton";
 import { CREATE_COMMENT } from "../graphql/mutations";
+import { COMMENT_FRAGMENT } from "../graphql/fragments";
 
 const CreateComment = ({ postID }) => {
   const [body, setBody] = useState("");
@@ -15,28 +16,14 @@ const CreateComment = ({ postID }) => {
   const [createComment, { loading }] = useMutation(CREATE_COMMENT, {
     update(cache, { data }) {
       if (data.createComment.comment) {
-        const FRAGMENT = gql`
-          fragment _ on Post {
-            commentsCount
-            comments {
-              id
-              body
-              createdAt
-              creator {
-                username
-              }
-            }
-          }
-        `;
-
         const cached = cache.readFragment({
           id: "Post:" + postID,
-          fragment: FRAGMENT,
+          fragment: COMMENT_FRAGMENT,
         });
 
         cache.writeFragment({
           id: "Post:" + postID,
-          fragment: FRAGMENT,
+          fragment: COMMENT_FRAGMENT,
           data: {
             commentsCount: cached.commentsCount + 1,
             comments: [data.createComment.comment, ...cached.comments],

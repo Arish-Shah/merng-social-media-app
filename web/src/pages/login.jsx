@@ -59,6 +59,7 @@ const Login = () => {
         value={username}
         onChange={setUsername}
         error={errors.username}
+        autoFocus={true}
       />
       <InputField
         type="password"
