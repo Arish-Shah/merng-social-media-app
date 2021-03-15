@@ -77,3 +77,9 @@ export const CREATE_COMMENT = gql`
     }
   }
 `;
+
+export const LIKE = gql`
+  mutation Like($postID: ID!) {
+    like(postID: $postID)
+  }
+`;

@@ -27,6 +27,7 @@ const Login = () => {
             me: data.login.user,
           },
         });
+        cache.evict({ fieldName: "feed" });
       }
     },
     onCompleted(data) {

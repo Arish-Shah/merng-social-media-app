@@ -29,6 +29,7 @@ const Register = () => {
             me: data.register.user,
           },
         });
+        cache.evict({ fieldName: "feed" });
       }
     },
     onCompleted(data) {
