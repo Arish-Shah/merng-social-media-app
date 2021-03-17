@@ -3,12 +3,15 @@ import { Form } from "react-bootstrap";
 import { useMutation } from "@apollo/client";
 import { useHistory } from "react-router-dom";
 
+import useAuth from "../util/useAuth";
 import InputField from "../components/InputField";
 import LoadingButton from "../components/LoadingButton";
 import { ME } from "../graphql/queries";
 import { REGISTER } from "../graphql/mutations";
 
 const Register = () => {
+  useAuth();
+
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
